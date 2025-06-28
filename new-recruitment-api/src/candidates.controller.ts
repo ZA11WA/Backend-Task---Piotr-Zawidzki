@@ -12,8 +12,47 @@ export class CandidatesController {
     async getAll(req: Request, res: Response) {
         try {
             const db = getDb();
-            const candidates = await db.all('SELECT * FROM Candidate');
-            res.json(candidates);
+            
+            const page = parseInt(req.query.page as string) || 1;
+            const limit = parseInt(req.query.limit as string) || 10;
+            
+            if (page < 1) {
+                return res.status(400).json({ 
+                    message: "Page number must be greater than 0" 
+                });
+            }
+            
+            if (limit < 1 || limit > 100) {
+                return res.status(400).json({ 
+                    message: "Limit must be between 1 and 100" 
+                });
+            }
+            
+            const offset = (page - 1) * limit;
+            
+            const totalResult = await db.get('SELECT COUNT(*) as total FROM Candidate');
+            const total = totalResult.total;
+            
+            const candidates = await db.all(
+                'SELECT * FROM Candidate ORDER BY id DESC LIMIT ? OFFSET ?',
+                [limit, offset]
+            );
+            
+            const totalPages = Math.ceil(total / limit);
+            const hasNextPage = page < totalPages;
+            const hasPreviousPage = page > 1;
+            
+            res.json({
+                data: candidates,
+                pagination: {
+                    currentPage: page,
+                    totalPages,
+                    totalItems: total,
+                    itemsPerPage: limit,
+                    hasNextPage,
+                    hasPreviousPage
+                }
+            });
         } catch (error) {
             res.status(500).json({ error: 'Database error' });
         }
