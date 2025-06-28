@@ -1,5 +1,5 @@
 import express from "express";
-import { addCandidate, getCandidates } from "./controllers/candidate.controller.js";
+import { addCandidate } from "./controllers/candidate.controller.js";
 
 const app = express();
 const port = 4040;
@@ -18,7 +18,6 @@ const verifyApiKey = (req, res, next) => {
 
 app.use(express.json({ limit: "5mb" }));
 
-app.get("/candidates", verifyApiKey, getCandidates);
 app.post("/candidates", verifyApiKey, addCandidate);
 
 app.get("/", (_, res) => {

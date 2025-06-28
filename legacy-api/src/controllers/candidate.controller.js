@@ -24,10 +24,6 @@ const validateCandidate = (candidate) => {
   return errors;
 };
 
-export const getCandidates = (req, res) => {
-  res.status(200).json(candidatesDB);
-};
-
 export const addCandidate = (req, res) => {
   const { firstName, lastName, email } = req.body;
 
