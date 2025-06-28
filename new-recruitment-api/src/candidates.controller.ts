@@ -153,7 +153,7 @@ export class CandidatesController {
             );
             
             try {
-                const response = await fetch('http://localhost:4040/candidates', {
+                const response = await fetch('http://legacy-api:4040/candidates', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
